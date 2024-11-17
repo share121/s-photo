@@ -4,7 +4,6 @@ import { mkdir, readDir } from "@tauri-apps/plugin-fs";
 import { path } from "@tauri-apps/api";
 import { chineseMap } from "../chinese-map";
 import { ImgFile, ImgState, ImgStateDir } from "../img-file";
-import { invoke } from "@tauri-apps/api/core";
 
 const notification = useNotification();
 onMounted(() => {
