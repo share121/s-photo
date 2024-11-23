@@ -9,9 +9,9 @@
     "core:default",
     "shell:allow-open",
     "dialog:default",
+    "fs:allow-rename",
     "fs:allow-read-dir",
     "fs:allow-read-file",
-    "fs:allow-rename",
     "fs:allow-mkdir"
   ]
 }

@@ -13,11 +13,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # for Arm based macs (M1 and above).
+          - platform: "macos-latest" # 对于基于 Arm 的 Mac（M1 及以上）。
             args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest" # for Intel based macs.
+          - platform: "macos-latest" # 对于基于 Intel 的 Mac。
             args: "--target x86_64-apple-darwin"
-          - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
+          - platform: "ubuntu-22.04" # 对于 Tauri v1，你可以用 ubuntu-20.04 替换这个。
             args: ""
           - platform: "windows-latest"
             args: ""
@@ -41,7 +41,7 @@ jobs:
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          # 这些目标只在 macos 运行器上使用，所以放在 `if` 中以稍微加快 Windows 和 Linux 构建的速度。
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: install dependencies (ubuntu only)
@@ -49,19 +49,19 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-        # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2.
-        # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
+        # webkitgtk 4.0 是用于 Tauri v1 - webkitgtk 4.1 是用于 Tauri v2。
+        # 你可以删除你的应用不需要的那个，以加快工作流程的速度。
 
       - name: install frontend dependencies
-        run: pnpm install # change this to npm, pnpm or bun depending on which one you use.
+        run: pnpm install # 根据你使用的工具，将此更改为 npm、pnpm 或 bun。
 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          tagName: app-v__VERSION__ # 这个动作会自动将 \_\_VERSION\_\_ 替换为应用版本。
           releaseName: "App v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
+          releaseBody: "查看资产下载并安装此版本。"
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}

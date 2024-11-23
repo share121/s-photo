@@ -2,12 +2,10 @@
 import { darkTheme, lightTheme, zhCN, dateZhCN } from "naive-ui";
 
 const isDark = ref(true);
-onMounted(() => {
-  isDark.value = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (e) => (isDark.value = e.matches));
-});
+isDark.value = window.matchMedia("(prefers-color-scheme: dark)").matches;
+window
+  .matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", (e) => (isDark.value = e.matches));
 </script>
 
 <template>

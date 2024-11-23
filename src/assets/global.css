@@ -2,6 +2,10 @@ html {
   overflow-y: hidden !important;
   background: rgb(var(--v-theme-background));
 }
+* {
+  overflow-wrap: break-word;
+  scroll-behavior: smooth;
+}
 .main {
   height: 100vh;
   transition: height 0s;
@@ -11,12 +15,15 @@ html {
   height: 100%;
   object-fit: contain;
 }
-.img-list-item-selected {
+.file-list-item-selected {
   background-color: var(--n-merged-color-hover);
 }
-.img-select * {
+.file-select * {
   color: rgb(56, 136, 197) !important;
 }
-.img-discard * {
+.file-discard * {
   color: rgb(208, 58, 83) !important;
+}
+.file-list-item * {
+  pointer-events: none;
 }

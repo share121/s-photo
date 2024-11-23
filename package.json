@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "license": "MIT",
+  "description": "使用几个快捷键即可快速筛选照片",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -16,12 +18,16 @@
     "@tauri-apps/plugin-shell": "^2",
     "@vueuse/components": "^11.2.0",
     "@vueuse/core": "^11.2.0",
+    "@xmldom/xmldom": "^0.9.5",
     "async-mutex": "^0.5.0",
     "exifreader": "^4.25.0",
+    "path-browserify": "^1.0.1",
+    "pinia": "^2.2.6",
     "vue": "^3.3.4"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
+    "@types/path-browserify": "^1.0.3",
     "@vitejs/plugin-vue": "^5.0.5",
     "naive-ui": "^2.40.1",
     "typescript": "^5.2.2",

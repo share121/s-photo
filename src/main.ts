@@ -1,8 +1,10 @@
 import { createApp } from "vue";
+import { createPinia } from "pinia";
 
 import "./assets/global.css";
 import naive from "naive-ui";
 
 import App from "./App.vue";
 
-createApp(App).use(naive).mount("#app");
+const pinia = createPinia();
+createApp(App).use(naive).use(pinia).mount("#app");

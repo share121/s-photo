@@ -1,16 +1,16 @@
 [package]
 name = "s-photo"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "使用几个快捷键即可快速筛选照片"
+authors = ["share121"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# 参见 https://doc.rust-lang.org/cargo/reference/manifest.html 了解更多键及其定义
 
 [lib]
-# The `_lib` suffix may seem redundant but it is necessary
-# to make the lib name unique and wouldn't conflict with the bin name.
-# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+# `_lib` 后缀看起来可能是多余的，但它是必要的
+# 以确保库名称是唯一的，并且不会与二进制名称冲突。
+# 这似乎只会在 Windows 上成为问题，参见 https://github.com/rust-lang/cargo/issues/8519
 name = "s_photo_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
@@ -26,11 +26,11 @@ tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 
 [profile.dev]
-incremental = true # Compile your binary in smaller steps.
+incremental = true # 以小步骤编译你的二进制文件。
 
 [profile.release]
-codegen-units = 1 # Allows LLVM to perform better optimization.
-lto = true        # Enables link-time-optimizations.
-opt-level = "s"   # Prioritizes small binary size. Use `3` if you prefer speed.
-panic = "abort"   # Higher performance by disabling panic handlers.
-strip = true      # Ensures debug symbols are removed.
+codegen-units = 1 # 允许 LLVM 执行更好的优化。
+lto = true        # 启用链接时间优化。
+opt-level = 3     # 优先考虑小二进制文件大小。如果你更看重速度，请使用 `3`。
+panic = "abort"   # 通过禁用 panic 处理程序提高性能。
+strip = true      # 确保移除调试符号。

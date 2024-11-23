@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { open } from "@tauri-apps/plugin-dialog";
-import { mkdir, readDir } from "@tauri-apps/plugin-fs";
-import { path } from "@tauri-apps/api";
+import { readDir } from "@tauri-apps/plugin-fs";
 import { chineseMap } from "../chinese-map";
-import { ImgFile, ImgState, ImgStateDir } from "../img-file";
+import { extname, join } from "path-browserify";
+import { FileState, useFilesStore } from "../stores/files";
 
 const notification = useNotification();
 onMounted(() => {
   window.onerror = (message, source, lineno, colno, error) => {
     notification.error({
-      content: "全局错误",
-      meta: `错误消息：${message}\n脚本 URL：${source}\n行号：${lineno}\n列号：${colno}\n错误对象：${error}`,
+      title: "全局错误",
+      content: `${message}\n\n脚本 URL：${source}\n行号：${lineno}\n列号：${colno}\n错误对象：${error}`,
       duration: 3000,
       keepAliveOnHover: true,
     });
   };
   window.onunhandledrejection = (event) => {
     notification.error({
-      content: "未捕获的异常",
-      meta: event.reason + "",
+      title: "未捕获的异常",
+      content: event.reason + "",
       duration: 3000,
       keepAliveOnHover: true,
     });
@@ -26,52 +26,25 @@ onMounted(() => {
 });
 
 const dir = ref<string | null>(null);
-const imgs = shallowReactive<ImgFile[]>([]);
-const selectedImg: Ref<ImgFile | undefined> = shallowRef(undefined);
-const curIndex = computed(() =>
-  selectedImg.value ? imgs.indexOf(selectedImg.value) : -1
-);
-
-const showTags = asyncComputed(
-  async () => selectedImg.value && (await selectedImg.value.getTags()),
-  undefined,
-  { lazy: true }
-);
-const curImgUrl = asyncComputed(
-  async () => selectedImg.value && selectedImg.value.getUrl(),
-  undefined,
-  { lazy: true }
-);
+const store = useFilesStore();
 
 async function openDialog() {
   const dirpath = (dir.value = await open({ directory: true }));
   if (!dirpath) return;
   const entries = await readDir(dirpath);
-  for (const e of Object.values(ImgStateDir)) {
-    if (e !== ".") {
-      try {
-        await mkdir(await path.join(dirpath, e));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }
   entries
     .filter((e) => e.isFile)
     .forEach(async (entry) => {
-      const ext = (await path.extname(entry.name)).toLowerCase();
-      if (!["jpg", "jpeg", "png"].includes(ext)) return;
-      imgs.push(new ImgFile(dirpath, entry.name));
+      const ext = extname(entry.name).toLowerCase();
+      if (![".jpg", ".jpeg", ".png"].includes(ext)) return;
+      store.files.push({
+        dir: dirpath,
+        name: entry.name,
+        state: FileState.wait,
+        path: join(dirpath, entry.name),
+      });
     });
 }
-
-watch(
-  imgs,
-  (imgs) => {
-    if (!selectedImg.value && imgs.length) selectedImg.value = imgs[0];
-  },
-  { deep: true }
-);
 
 onMounted(() => {
   window.addEventListener(
@@ -80,13 +53,13 @@ onMounted(() => {
       if (["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName ?? ""))
         return;
       const map: { [key: string]: () => Promise<void> | void } = {
-        ArrowLeft: prevImg,
-        ArrowRight: nextImg,
-        ArrowUp: prevImg,
-        ArrowDown: nextImg,
-        q: selectImg,
-        p: discardImg,
-        z: cancelImg,
+        ArrowLeft: prevFile,
+        ArrowRight: nextFile,
+        ArrowUp: prevFile,
+        ArrowDown: nextFile,
+        q: selectFile,
+        p: discardFile,
+        z: cancelFile,
       };
       if (e.key in map) {
         e.preventDefault();
@@ -98,15 +71,9 @@ onMounted(() => {
   );
 });
 
-function prevImg() {
-  if (!imgs.length) return;
-  if (curIndex.value > 0) {
-    selectedImg.value = imgs[curIndex.value - 1];
-  } else if (curIndex.value === -1) {
-    selectedImg.value = imgs[imgs.length - 1];
-  }
+function scrollToFile(index: number) {
   document
-    .querySelector(`.img-list-item:nth-child(${curIndex.value + 2})`)
+    .querySelector(`.file-list-item:nth-child(${index + 2})`)
     ?.scrollIntoView({
       behavior: "smooth",
       block: "nearest",
@@ -114,47 +81,42 @@ function prevImg() {
     });
 }
 
-function nextImg() {
-  if (!imgs.length) return;
-  if (curIndex.value < imgs.length - 1) {
-    selectedImg.value = imgs[curIndex.value + 1];
-  }
-  document
-    .querySelector(`.img-list-item:nth-child(${curIndex.value + 2})`)
-    ?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
+function prevFile() {
+  if (!store.files.length) return;
+  store.curIndex = Math.max(0, store.curIndex - 1);
+  scrollToFile(store.curIndex);
 }
 
-async function selectImg() {
-  const img = selectedImg.value;
-  nextImg();
-  await img?.setState(ImgState.select);
+function nextFile() {
+  if (!store.files.length) return;
+  store.curIndex = Math.min(store.files.length - 1, store.curIndex + 1);
+  scrollToFile(store.curIndex);
 }
 
-async function discardImg() {
-  const img = selectedImg.value;
-  nextImg();
-  await img?.setState(ImgState.discard);
+async function selectFile() {
+  if (!store.curFile) return;
+  store.curFile.state = FileState.select;
+  nextFile();
 }
 
-async function cancelImg() {
-  const img = selectedImg.value;
-  if ((await img?.getState()) === ImgState.wait) {
-    if (curIndex.value <= 0) return;
-    prevImg();
-    await cancelImg();
-  } else await img?.setState(ImgState.wait);
+async function discardFile() {
+  if (!store.curFile) return;
+  store.curFile.state = FileState.discard;
+  nextFile();
 }
 
-const totalSelected = computed(
-  () => imgs.filter((img) => img.state.value === ImgState.select).length
-);
-const totalDiscarded = computed(
-  () => imgs.filter((img) => img.state.value === ImgState.discard).length
-);
+async function cancelFile() {
+  if (!store.curFile) return;
+  store.curFile.state = FileState.wait;
+  prevFile();
+}
+
+function switchFile(e: PointerEvent) {
+  const index = (e.target as HTMLLIElement).dataset.index;
+  if (!index) return;
+  store.curIndex = parseInt(index);
+  scrollToFile(store.curIndex);
+}
 </script>
 
 <template>
@@ -163,15 +125,18 @@ const totalDiscarded = computed(
       style="height: 64px; display: flex; align-items: center; padding: 0 16px"
       bordered
     >
-      <n-h2 style="margin: 0">{{
-        selectedImg?.filename
-          ? `${selectedImg.filename} (${curIndex + 1}/${imgs.length})`
-          : "sPhoto"
-      }}</n-h2>
+      <n-h2 style="margin: 0">
+        <template v-if="store.curFile?.name">
+          {{ store.curFile.name }} ({{ store.curIndex + 1 }}/{{
+            store.files.length
+          }})
+        </template>
+        <template v-else>sPhoto</template>
+      </n-h2>
       <n-space style="margin-left: auto">
-        <n-button @click="selectImg">选用(Q)</n-button>
-        <n-button @click="discardImg">弃用(P)</n-button>
-        <n-button @click="cancelImg">撤销(Z)</n-button>
+        <n-button @click="selectFile">选用(Q)</n-button>
+        <n-button @click="discardFile">弃用(P)</n-button>
+        <n-button @click="cancelFile">撤销(Z)</n-button>
       </n-space>
     </n-layout-header>
     <n-layout position="absolute" style="top: 64px; bottom: 64px" has-sider>
@@ -180,23 +145,25 @@ const totalDiscarded = computed(
         bordered
         show-trigger="arrow-circle"
       >
-        <n-list hoverable clickable>
+        <n-list clickable hoverable @click="switchFile">
           <n-list-item>
             <n-h3 style="margin: 0">
-              图片 ({{ curIndex + 1 }}/{{ imgs.length }})
+              图片 ({{ store.files.length === 0 ? 0 : store.curIndex + 1 }}/{{
+                store.files.length
+              }})
             </n-h3>
           </n-list-item>
           <n-list-item
-            v-for="img of imgs"
-            class="img-list-item"
-            :key="img.dir + '/' + img.filename"
-            @click="selectedImg = img"
+            v-for="[index, file] of store.files.entries()"
+            class="file-list-item"
+            :key="file.dir + '/' + file.name"
+            :data-index="index"
             :class="{
-              'img-list-item-selected': selectedImg === img,
-              ['img-' + img.state.value]: true,
+              'file-list-item-selected': store.curIndex === index,
+              ['file-' + file.state]: true,
             }"
           >
-            <n-thing :title="img.filename" :description="img.dir"></n-thing>
+            <n-thing :title="file.name" :description="file.dir"></n-thing>
           </n-list-item>
           <n-list-item>
             <n-thing description="没有更多图片了"></n-thing>
@@ -207,15 +174,15 @@ const totalDiscarded = computed(
         <n-layout
           content-style="display: flex; align-items: center; justify-content: center;"
         >
-          <n-button v-if="!imgs.length" @click="openDialog"
+          <n-button v-if="!store.files.length" @click="openDialog"
             >选择文件夹</n-button
           >
           <img
             ref="imgEl"
             class="img"
-            v-else-if="curImgUrl"
-            :src="curImgUrl"
-            :alt="selectedImg?.filename ?? '图片'"
+            v-else-if="store.curUrl"
+            :src="store.curUrl"
+            :alt="store.curFile?.name ?? '图片'"
           />
           <div v-else>选择图片以查看</div>
         </n-layout>
@@ -228,10 +195,10 @@ const totalDiscarded = computed(
             <n-list-item>
               <n-h3 style="margin: 0">EXIF 信息</n-h3>
             </n-list-item>
-            <n-list-item v-if="!showTags">
+            <n-list-item v-if="!store.curTags?.length">
               <n-thing description="选择图片以查看 EXIF 信息"></n-thing>
             </n-list-item>
-            <n-list-item v-else v-for="tag in showTags" :key="tag[0]">
+            <n-list-item v-else v-for="tag in store.curTags" :key="tag[0]">
               <n-thing
                 :title="chineseMap[tag[0]] ?? tag[0]"
                 :description="tag[1] + ''"
@@ -246,7 +213,7 @@ const totalDiscarded = computed(
       style="height: 64px; padding: 24px"
       bordered
     >
-      通过率：{{ (totalSelected * 100) / (totalSelected + totalDiscarded) }}%
+      通过率：{{ (store.passRate * 100).toFixed(2) }}%
     </n-layout-footer>
   </n-layout>
 </template>
