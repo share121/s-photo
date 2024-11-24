@@ -62,8 +62,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }} # 使用之前配置的私钥
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }} # 使用之前配置的私钥密码
         with:
-          tagName: app-v__VERSION__ # 这个动作会自动将 \_\_VERSION\_\_ 替换为应用版本。
-          releaseName: "App v__VERSION__"
+          tagName: sphoto-v__VERSION__ # 这个动作会自动将 \_\_VERSION\_\_ 替换为应用版本。
+          releaseName: "sPhoto v__VERSION__"
           releaseBody: "查看资产下载并安装此版本。"
           releaseDraft: true
           prerelease: false
