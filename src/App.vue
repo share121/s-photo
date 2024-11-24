@@ -16,7 +16,9 @@ window
   >
     <n-global-style />
     <n-notification-provider>
-      <Index></Index>
+      <n-dialog-provider>
+        <Index></Index>
+      </n-dialog-provider>
     </n-notification-provider>
   </n-config-provider>
 </template>

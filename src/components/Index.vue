@@ -5,7 +5,10 @@ import { chineseMap } from "../chinese-map";
 import { extname, join } from "path-browserify";
 import { FileState, useFilesStore } from "../stores/files";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { check } from "@tauri-apps/plugin-updater";
+import { relaunch } from "@tauri-apps/plugin-process";
 
+const dialog = useDialog();
 const notification = useNotification();
 window.onerror = (message, source, lineno, colno, error) => {
   notification.error({
@@ -63,6 +66,24 @@ console.log = (message) => {
     keepAliveOnHover: true,
   });
 };
+
+onMounted(async () => {
+  const update = await check();
+  if (update?.available) {
+    dialog.info({
+      title: "发现新版本",
+      content: `版本：${update.currentVersion} -> ${
+        update.version
+      }\n更新内容：\n${update.body ?? "修复了一些已知问题"}`,
+      positiveText: "更新",
+      negativeText: "取消",
+      onPositiveClick: async () => {
+        await update.downloadAndInstall();
+        await relaunch();
+      },
+    });
+  }
+});
 
 const dir = ref<string | null>(null);
 const store = useFilesStore();

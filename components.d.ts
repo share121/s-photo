@@ -10,6 +10,7 @@ declare module 'vue' {
     Index: typeof import('./src/components/Index.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
+    NDialogProvider: typeof import('naive-ui')['NDialogProvider']
     NGlobalStyle: typeof import('naive-ui')['NGlobalStyle']
     NH2: typeof import('naive-ui')['NH2']
     NH3: typeof import('naive-ui')['NH3']
