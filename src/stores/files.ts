@@ -53,7 +53,7 @@ export const useFilesStore = defineStore("files", () => {
   watchDebounced(curFile, async (file) => {
     if (!file) return;
     curUrl.value = convertFileSrc(file.path);
-  }, { debounce: 50 });
+  }, { debounce: 100 });
   const curTags: Ref<string[][] | undefined> = ref(undefined);
   watchDebounced(curFile, async (file, _, onCleanup) => {
     if (!file) return;

@@ -35,7 +35,6 @@ export default defineConfig(async () => ({
       ],
     }),
   ],
-
   // 为 Tauri 开发定制的 Vite 选项，仅在 `tauri dev` 或 `tauri build` 中应用
   //
   // 1. 防止 vite 遮蔽 rust 错误

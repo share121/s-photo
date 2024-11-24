@@ -93,22 +93,29 @@ function nextFile() {
   scrollToFile(store.curIndex);
 }
 
-async function selectFile() {
+function selectFile() {
   if (!store.curFile) return;
   store.curFile.state = FileState.select;
   nextFile();
 }
 
-async function discardFile() {
+function discardFile() {
   if (!store.curFile) return;
   store.curFile.state = FileState.discard;
   nextFile();
 }
 
-async function cancelFile() {
+function cancelFile() {
   if (!store.curFile) return;
-  store.curFile.state = FileState.wait;
-  prevFile();
+  let index = store.curIndex;
+  for (; index >= 0; index--) {
+    if (store.files[index].state !== FileState.wait) {
+      store.curIndex = index;
+      store.curFile.state = FileState.wait;
+      return;
+    }
+  }
+  store.curIndex = 0;
 }
 
 function switchFile(e: PointerEvent) {
