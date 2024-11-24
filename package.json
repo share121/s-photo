@@ -1,7 +1,7 @@
 {
   "name": "s-photo",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "license": "MIT",
   "description": "使用几个快捷键即可快速筛选照片",

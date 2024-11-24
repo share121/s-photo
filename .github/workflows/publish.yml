@@ -64,7 +64,7 @@ jobs:
         with:
           tagName: sphoto-v__VERSION__ # 这个动作会自动将 \_\_VERSION\_\_ 替换为应用版本。
           releaseName: "sPhoto v__VERSION__"
-          releaseBody: "查看资产下载并安装此版本。"
+          releaseBody: "修复了一些已知问题"
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
