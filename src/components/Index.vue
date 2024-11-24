@@ -4,26 +4,65 @@ import { readDir } from "@tauri-apps/plugin-fs";
 import { chineseMap } from "../chinese-map";
 import { extname, join } from "path-browserify";
 import { FileState, useFilesStore } from "../stores/files";
+import { convertFileSrc } from "@tauri-apps/api/core";
 
 const notification = useNotification();
-onMounted(() => {
-  window.onerror = (message, source, lineno, colno, error) => {
-    notification.error({
-      title: "全局错误",
-      content: `${message}\n\n脚本 URL：${source}\n行号：${lineno}\n列号：${colno}\n错误对象：${error}`,
-      duration: 3000,
-      keepAliveOnHover: true,
-    });
-  };
-  window.onunhandledrejection = (event) => {
-    notification.error({
-      title: "未捕获的异常",
-      content: event.reason + "",
-      duration: 3000,
-      keepAliveOnHover: true,
-    });
-  };
-});
+window.onerror = (message, source, lineno, colno, error) => {
+  notification.error({
+    title: "错误",
+    content: `${message}\n\n脚本 URL：${source}\n行号：${lineno}\n列号：${colno}\n错误对象：${error}`,
+    duration: 3000,
+    keepAliveOnHover: true,
+  });
+};
+window.onunhandledrejection = (event) => {
+  notification.error({
+    title: "未捕获的异常",
+    content: event.reason + "",
+    duration: 3000,
+    keepAliveOnHover: true,
+  });
+};
+console.error = (message) => {
+  notification.error({
+    title: "错误",
+    content: message + "",
+    duration: 3000,
+    keepAliveOnHover: true,
+  });
+};
+console.warn = (message) => {
+  notification.warning({
+    title: "警告",
+    content: message + "",
+    duration: 3000,
+    keepAliveOnHover: true,
+  });
+};
+console.info = (message) => {
+  notification.info({
+    title: "提示",
+    content: message + "",
+    duration: 3000,
+    keepAliveOnHover: true,
+  });
+};
+console.debug = (message) => {
+  notification.info({
+    title: "调试",
+    content: message + "",
+    duration: 3000,
+    keepAliveOnHover: true,
+  });
+};
+console.log = (message) => {
+  notification.info({
+    title: "日志",
+    content: message + "",
+    duration: 3000,
+    keepAliveOnHover: true,
+  });
+};
 
 const dir = ref<string | null>(null);
 const store = useFilesStore();
@@ -42,6 +81,7 @@ async function openDialog() {
         name: entry.name,
         state: FileState.wait,
         path: join(dirpath, entry.name),
+        url: convertFileSrc(join(dirpath, entry.name)),
       });
     });
 }
@@ -187,9 +227,9 @@ function switchFile(e: PointerEvent) {
           <img
             ref="imgEl"
             class="img"
-            v-else-if="store.curUrl"
-            :src="store.curUrl"
-            :alt="store.curFile?.name ?? '图片'"
+            v-else-if="store.curFile?.url"
+            :src="store.curFile.url"
+            :alt="store.curFile.name ?? '图片'"
           />
           <div v-else>选择图片以查看</div>
         </n-layout>

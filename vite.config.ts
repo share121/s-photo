@@ -56,7 +56,4 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
   },
-  esbuild: {
-    drop: host && ["console", "debugger"],
-  },
-} as any));
+}));

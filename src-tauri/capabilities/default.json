@@ -9,7 +9,12 @@
     "core:default",
     "shell:allow-open",
     "dialog:default",
+    {
+      "identifier": "fs:scope",
+      "allow": [{ "path": "**" }]
+    },
     "fs:allow-rename",
+    "fs:allow-exists",
     "fs:allow-read-dir",
     "fs:allow-read-file",
     "fs:allow-mkdir"
