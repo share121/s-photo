@@ -53,7 +53,7 @@ export default defineConfig(async () => ({
       : undefined,
     watch: {
       // 3. 告诉 vite 忽略监视 `src-tauri`
-      ignored: ["**/src-tauri/**"],
+      ignored: ["**/src-tauri/**", "**/scripts/**"],
     },
   },
 }));

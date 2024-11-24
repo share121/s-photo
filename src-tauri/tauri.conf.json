@@ -1,13 +1,21 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "s-photo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "identifier": "com.s-photo.share121",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:8080",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/share121/s-photo/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU3RjhGNzZDMjM4NEI1MkMKUldRc3RZUWpiUGY0Vnh5QTYzU3BGbFFQbXM4UDVScGEvTjhaL0JlQ0JYOXRFNE1xTk5VNk00WjUK"
+    }
   },
   "app": {
     "windows": [
@@ -32,6 +40,7 @@
       "icons/icon.png",
       "icons/icon.ico"
     ],
+    "createUpdaterArtifacts": true,
     "category": "Utility",
     "shortDescription": "快速筛照片",
     "longDescription": "使用几个快捷键即可快速筛选照片",

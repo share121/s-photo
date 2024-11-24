@@ -24,6 +24,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
+tauri-plugin-process = "2"
 
 [profile.dev]
 incremental = true # 以小步骤编译你的二进制文件。
@@ -34,3 +35,6 @@ lto = true        # 启用链接时间优化。
 opt-level = 3     # 优先考虑小二进制文件大小。如果你更看重速度，请使用 `3`。
 panic = "abort"   # 通过禁用 panic 处理程序提高性能。
 strip = true      # 确保移除调试符号。
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-updater = "2"

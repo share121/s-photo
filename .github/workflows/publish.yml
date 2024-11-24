@@ -2,8 +2,9 @@ name: publish
 
 on:
   push:
-    branches:
-      - release
+    tags:
+      - "v*"
+  workflow_dispatch:
 
 jobs:
   publish-tauri:
@@ -48,7 +49,7 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
         # webkitgtk 4.0 是用于 Tauri v1 - webkitgtk 4.1 是用于 Tauri v2。
         # 你可以删除你的应用不需要的那个，以加快工作流程的速度。
 
@@ -58,6 +59,8 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }} # 使用之前配置的私钥
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_PRIVATE_KEY_PASSWORD }} # 使用之前配置的私钥密码
         with:
           tagName: app-v__VERSION__ # 这个动作会自动将 \_\_VERSION\_\_ 替换为应用版本。
           releaseName: "App v__VERSION__"
@@ -65,3 +68,8 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      - name: Upload assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/updater.mjs
