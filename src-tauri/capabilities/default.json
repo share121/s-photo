@@ -8,11 +8,7 @@
   "permissions": [
     "core:default",
     "shell:allow-open",
-    "dialog:default",
-    {
-      "identifier": "fs:scope",
-      "allow": [{ "path": "**" }]
-    },
+    "dialog:allow-open",
     "fs:allow-rename",
     "fs:allow-exists",
     "fs:allow-read-dir",
