@@ -85,7 +85,7 @@ export const useFilesStore = defineStore("files", () => {
           file.url = convertFileSrc(file.path);
         }, { timeout: 3000 });
       }
-      writeTextFile(
+      await writeTextFile(
         join(files[0].dir, "通过率.txt"),
         passRate.value * 100 + "%",
       );
