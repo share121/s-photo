@@ -3,6 +3,7 @@ import { join } from "path-browserify";
 import GetTagsWorker from "../workers/get-tags.ts?worker";
 import { exists, mkdir, readFile, rename } from "@tauri-apps/plugin-fs";
 import { Mutex } from "async-mutex";
+import "requestidlecallback-polyfill";
 
 export enum FileState {
   select = "select",

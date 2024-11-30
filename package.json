@@ -25,6 +25,7 @@
     "exifreader": "^4.25.0",
     "path-browserify": "^1.0.1",
     "pinia": "^2.2.6",
+    "requestidlecallback-polyfill": "^1.0.2",
     "vue": "^3.3.4"
   },
   "devDependencies": {
