@@ -1,7 +1,13 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { join } from "path-browserify";
 import GetTagsWorker from "../workers/get-tags.ts?worker";
-import { exists, mkdir, readFile, rename } from "@tauri-apps/plugin-fs";
+import {
+  exists,
+  mkdir,
+  readFile,
+  rename,
+  writeTextFile,
+} from "@tauri-apps/plugin-fs";
 import { Mutex } from "async-mutex";
 import "requestidlecallback-polyfill";
 
@@ -79,6 +85,10 @@ export const useFilesStore = defineStore("files", () => {
           file.url = convertFileSrc(file.path);
         }, { timeout: 3000 });
       }
+      writeTextFile(
+        join(files[0].dir, "通过率.txt"),
+        passRate.value * 100 + "%",
+      );
     });
   }, { debounce: 1000 });
   return {

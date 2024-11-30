@@ -88,28 +88,25 @@ onMounted(async () => {
 const store = useFilesStore();
 
 async function openDialog() {
-  const dirs = await open({
+  const dir = await open({
     directory: true,
-    multiple: true,
     recursive: true,
   });
-  if (!dirs) return;
-  for (const dir of dirs) {
-    readDir(dir).then((entries) => {
-      for (const entry of entries) {
-        if (!entry.isFile) continue;
-        const ext = extname(entry.name).toLowerCase();
-        if (![".jpg", ".jpeg", ".png"].includes(ext)) continue;
-        store.files.push({
-          dir,
-          name: entry.name,
-          state: FileState.wait,
-          path: join(dir, entry.name),
-          url: convertFileSrc(join(dir, entry.name)),
-        });
-      }
-    });
-  }
+  if (!dir) return;
+  readDir(dir).then((entries) => {
+    for (const entry of entries) {
+      if (!entry.isFile) continue;
+      const ext = extname(entry.name).toLowerCase();
+      if (![".jpg", ".jpeg", ".png"].includes(ext)) continue;
+      store.files.push({
+        dir,
+        name: entry.name,
+        state: FileState.wait,
+        path: join(dir, entry.name),
+        url: convertFileSrc(join(dir, entry.name)),
+      });
+    }
+  });
 }
 
 onMounted(() => {
