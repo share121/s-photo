@@ -4,11 +4,6 @@ html {
 }
 * {
   overflow-wrap: break-word;
-  scroll-behavior: smooth;
-}
-.main {
-  height: 100vh;
-  transition: height 0s;
 }
 .img {
   width: 100%;

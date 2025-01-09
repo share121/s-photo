@@ -50,8 +50,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-        # webkitgtk 4.0 是用于 Tauri v1 - webkitgtk 4.1 是用于 Tauri v2。
-        # 你可以删除你的应用不需要的那个，以加快工作流程的速度。
 
       - name: install frontend dependencies
         run: pnpm install # 根据你使用的工具，将此更改为 npm、pnpm 或 bun。
@@ -62,8 +60,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }} # 使用之前配置的私钥
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }} # 使用之前配置的私钥密码
         with:
-          tagName: sphoto-v__VERSION__ # 这个动作会自动将 \_\_VERSION\_\_ 替换为应用版本。
-          releaseName: "sPhoto v__VERSION__"
+          tagName: s-photo-v__VERSION__ # 这个动作会自动将 \_\_VERSION\_\_ 替换为应用版本。
+          releaseName: "s-photo v__VERSION__"
           releaseBody: "修复了一些已知问题"
           releaseDraft: true
           prerelease: false
