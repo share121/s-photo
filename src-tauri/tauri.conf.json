@@ -1,13 +1,13 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "s-photo",
   "version": "1.1.1",
-  "identifier": "com.s-photo.share121",
+  "identifier": "com.s121.s-photo",
   "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:3000",
     "beforeDevCommand": "pnpm dev",
-    "devUrl": "http://localhost:8080",
-    "beforeBuildCommand": "pnpm build",
-    "frontendDist": "../dist"
+    "beforeBuildCommand": "pnpm generate"
   },
   "plugins": {
     "updater": {
@@ -15,7 +15,7 @@
         "https://s-photo-update.s121.top",
         "https://github.com/share121/s-photo/releases/latest/download/latest.json"
       ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU3RjhGNzZDMjM4NEI1MkMKUldRc3RZUWpiUGY0Vnh5QTYzU3BGbFFQbXM4UDVScGEvTjhaL0JlQ0JYOXRFNE1xTk5VNk00WjUK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY3Q0MzODMzREIxQ0RGMzcKUldRMzN4emJNempNOTlMdWRSaTU0dXhVOXA3b0JhQlZSK3dXa2szZ1MxMEh5QUVGdUcvYkdXZTUK"
     }
   },
   "app": {
@@ -23,7 +23,9 @@
       {
         "title": "s-photo",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "resizable": true,
+        "fullscreen": false
       }
     ],
     "security": {
@@ -35,6 +37,11 @@
     }
   },
   "bundle": {
+    "license": "MIT",
+    "publisher": "share121",
+    "licenseFile": "../LICENSE",
+    "copyright": "Copyright (c) 2024 share121",
+    "homepage": "https://github.com/share121/s-photo",
     "active": true,
     "targets": "all",
     "icon": ["icons/icon.png", "icons/icon.ico"],

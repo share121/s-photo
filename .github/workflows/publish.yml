@@ -21,7 +21,7 @@ jobs:
           - platform: "ubuntu-22.04" # 对于 Tauri v1，你可以用 ubuntu-20.04 替换这个。
             args: ""
           - platform: "windows-latest"
-            args: ""
+            args: "--target i686-pc-windows-msvc"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -43,7 +43,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           # 这些目标只在 macos 运行器上使用，所以放在 `if` 中以稍微加快 Windows 和 Linux 构建的速度。
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || matrix.platform == 'windows-latest' && 'i686-pc-windows-msvc' || '' }}
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -65,4 +65,5 @@ jobs:
           releaseBody: "修复了一些已知问题"
           releaseDraft: true
           prerelease: false
+          updaterJsonPreferNsis: true
           args: ${{ matrix.args }}

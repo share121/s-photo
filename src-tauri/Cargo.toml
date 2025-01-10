@@ -1,30 +1,32 @@
 [package]
 name = "s-photo"
-version = "0.1.0"
+version = "1.1.1"
 description = "使用几个快捷键即可快速筛选照片"
 authors = ["share121"]
+license = "MIT"
+repository = "https://github.com/share121/s-photo"
 edition = "2021"
+rust-version = "1.77.2"
 
-# 参见 https://doc.rust-lang.org/cargo/reference/manifest.html 了解更多键及其定义
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-# `_lib` 后缀看起来可能是多余的，但它是必要的
-# 以确保库名称是唯一的，并且不会与二进制名称冲突。
-# 这似乎只会在 Windows 上成为问题，参见 https://github.com/rust-lang/cargo/issues/8519
-name = "s_photo_lib"
+name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { version = "2.0.3", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = ["protocol-asset"] }
-tauri-plugin-shell = "2"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+tauri = { version = "2.2.0", features = ["protocol-asset"] }
+tauri-plugin-log = "2.0.0-rc"
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-process = "2"
+tauri-plugin-shell = "2"
 
 [profile.dev]
 incremental = true # 以小步骤编译你的二进制文件。
@@ -36,5 +38,5 @@ opt-level = 3     # 优先考虑小二进制文件大小。如果你更看重速
 panic = "abort"   # 通过禁用 panic 处理程序提高性能。
 strip = true      # 确保移除调试符号。
 
-[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"

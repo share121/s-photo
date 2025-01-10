@@ -1,89 +1,10 @@
 <script setup lang="ts">
 import { open } from "@tauri-apps/plugin-dialog";
 import { readDir } from "@tauri-apps/plugin-fs";
-import { chineseMap } from "../chinese-map";
+import { chineseMap } from "~/utils/chinese-map";
 import { extname, join } from "path-browserify";
 import { FileState, useFilesStore } from "../stores/files";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { check } from "@tauri-apps/plugin-updater";
-import { relaunch } from "@tauri-apps/plugin-process";
-
-const dialog = useDialog();
-const notification = useNotification();
-window.onerror = (message, source, lineno, colno, error) => {
-  notification.error({
-    title: "错误",
-    content: `${message}\n\n脚本 URL：${source}\n行号：${lineno}\n列号：${colno}\n错误对象：${error}`,
-    duration: 3000,
-    keepAliveOnHover: true,
-  });
-};
-window.onunhandledrejection = (event) => {
-  notification.error({
-    title: "未捕获的异常",
-    content: event.reason + "",
-    duration: 3000,
-    keepAliveOnHover: true,
-  });
-};
-console.error = (message) => {
-  notification.error({
-    title: "错误",
-    content: message + "",
-    duration: 3000,
-    keepAliveOnHover: true,
-  });
-};
-console.warn = (message) => {
-  notification.warning({
-    title: "警告",
-    content: message + "",
-    duration: 3000,
-    keepAliveOnHover: true,
-  });
-};
-console.info = (message) => {
-  notification.info({
-    title: "提示",
-    content: message + "",
-    duration: 3000,
-    keepAliveOnHover: true,
-  });
-};
-console.debug = (message) => {
-  notification.info({
-    title: "调试",
-    content: message + "",
-    duration: 3000,
-    keepAliveOnHover: true,
-  });
-};
-console.log = (message) => {
-  notification.info({
-    title: "日志",
-    content: message + "",
-    duration: 3000,
-    keepAliveOnHover: true,
-  });
-};
-
-onMounted(async () => {
-  const update = await check();
-  if (update?.available) {
-    dialog.info({
-      title: "发现新版本",
-      content: `版本：${update.currentVersion} -> ${
-        update.version
-      }\n更新内容：\n${update.body ?? "修复了一些已知问题"}`,
-      positiveText: "更新",
-      negativeText: "取消",
-      onPositiveClick: async () => {
-        await update.downloadAndInstall();
-        await relaunch();
-      },
-    });
-  }
-});
 
 const store = useFilesStore();
 
@@ -175,10 +96,12 @@ function cancelFile() {
     if (store.files[index].state !== FileState.wait) {
       store.curIndex = index;
       store.curFile.state = FileState.wait;
+      scrollToFile(store.curIndex);
       return;
     }
   }
   store.curIndex = 0;
+  scrollToFile(store.curIndex);
 }
 
 function switchFile(e: PointerEvent) {
@@ -230,7 +153,7 @@ function switchFile(e: PointerEvent) {
             :data-index="index"
             :class="{
               'file-list-item-selected': store.curIndex === index,
-              ['file-' + file.state]: true,
+              ['file-' + file.state]: file.state !== FileState.wait,
             }"
           >
             <n-thing :title="file.name" :description="file.dir"></n-thing>
@@ -287,3 +210,23 @@ function switchFile(e: PointerEvent) {
     </n-layout-footer>
   </n-layout>
 </template>
+
+<style>
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.file-list-item-selected {
+  background-color: var(--n-merged-color-hover);
+}
+.file-select * {
+  color: rgb(56, 136, 197) !important;
+}
+.file-discard * {
+  color: rgb(208, 58, 83) !important;
+}
+.file-list-item * {
+  pointer-events: none;
+}
+</style>

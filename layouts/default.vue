@@ -17,7 +17,11 @@ window
     <n-global-style />
     <n-notification-provider>
       <n-dialog-provider>
-        <Index></Index>
+        <ClientOnly>
+          <Dialog>
+            <slot></slot>
+          </Dialog>
+        </ClientOnly>
       </n-dialog-provider>
     </n-notification-provider>
   </n-config-provider>
