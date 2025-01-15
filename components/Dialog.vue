@@ -67,8 +67,6 @@ console.log = (message) => {
 
 onMounted(async () => {
   const update = await check();
-  let downloaded = 0;
-  let contentLength = 0;
   if (update?.available) {
     dialog.info({
       title: "发现新版本",
@@ -79,24 +77,9 @@ ${update.body ?? "修复了一些已知问题"}`,
       positiveText: "更新",
       negativeText: "取消",
       onPositiveClick: async () => {
-        await update.downloadAndInstall((event) => {
-          switch (event.event) {
-            case "Started":
-              contentLength = event.data.contentLength!;
-              console.log(
-                `started downloading ${event.data.contentLength} bytes`
-              );
-              break;
-            case "Progress":
-              downloaded += event.data.chunkLength;
-              console.log(`downloaded ${downloaded} from ${contentLength}`);
-              break;
-            case "Finished":
-              console.log("download finished");
-              break;
-          }
-        });
+        await update.downloadAndInstall();
         await relaunch();
+        return false;
       },
     });
   }

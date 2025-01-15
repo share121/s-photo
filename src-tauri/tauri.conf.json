@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "s-photo",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "identifier": "com.s121.s-photo",
   "build": {
     "frontendDist": "../dist",
@@ -11,10 +11,7 @@
   },
   "plugins": {
     "updater": {
-      "endpoints": [
-        "https://s-photo-update.s121.top",
-        "https://github.com/share121/s-photo/releases/latest/download/latest.json"
-      ],
+      "endpoints": ["https://spu.s121.top"],
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY3Q0MzODMzREIxQ0RGMzcKUldRMzN4emJNempNOTlMdWRSaTU0dXhVOXA3b0JhQlZSK3dXa2szZ1MxMEh5QUVGdUcvYkdXZTUK"
     }
   },

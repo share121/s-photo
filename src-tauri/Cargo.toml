@@ -1,6 +1,6 @@
 [package]
 name = "s-photo"
-version = "2.0.0"
+version = "0.1.0"
 description = "使用几个快捷键即可快速筛选照片"
 authors = ["share121"]
 license = "MIT"
